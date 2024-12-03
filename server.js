@@ -1,9 +1,29 @@
 import "dotenv/config"
 import express from "express"
 import pool from "./db.js"
+import nunjucks from "nunjucks"
+import morgan from "morgan"
+import bodyParser from "body-parser"
+
+
+
+import webbserverRouter from "./routes/webbserver.js"
+
+
 
 const app = express()
 const port = 3000
+
+nunjucks.configure("views", {
+  autoescape: true,
+  express: app
+})
+
+app.get('/', async (req, res) => {
+  const [birds] = await pool.promise().query('SELECT * FROM birds')
+
+  res.json(birds)
+})
 
 app.get("/birds", async (req, res) => {
   // const [birds] = await pool.promise().query('SELECT * FROM birds')
